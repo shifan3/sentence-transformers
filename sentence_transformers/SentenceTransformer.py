@@ -9,6 +9,7 @@ import requests
 import numpy as np
 from numpy import ndarray
 import transformers
+import sys
 import torch
 from torch import nn, Tensor, device
 from torch.optim import Optimizer
@@ -447,7 +448,8 @@ class SentenceTransformer(nn.Sequential):
             max_grad_norm: float = 1,
             use_amp: bool = False,
             callback: Callable[[float, int, int], None] = None,
-            show_progress_bar: bool = True
+            show_progress_bar: bool = True,
+            log_loss_steps:int = 0,
             ):
         """
         Train the model with the given training objective
@@ -534,6 +536,7 @@ class SentenceTransformer(nn.Sequential):
                 loss_model.train()
 
             for _ in trange(steps_per_epoch, desc="Iteration", smoothing=0.05, disable=not show_progress_bar):
+                losses_value = []
                 for train_idx in range(num_train_objectives):
                     loss_model = loss_models[train_idx]
                     optimizer = optimizers[train_idx]
@@ -568,7 +571,7 @@ class SentenceTransformer(nn.Sequential):
                         loss_value.backward()
                         torch.nn.utils.clip_grad_norm_(loss_model.parameters(), max_grad_norm)
                         optimizer.step()
-                    print(type(loss_value), loss_value.data.tolist())
+                    losses_value.append(loss_value.data.tolist())
                     optimizer.zero_grad()
 
                     if not skip_scheduler:
@@ -576,6 +579,9 @@ class SentenceTransformer(nn.Sequential):
 
                 training_steps += 1
                 global_step += 1
+
+                if log_loss_steps > 0 and training_steps % log_loss_steps == 0:
+                    print('losses', losses_value, file = sys.stderr)
 
                 if evaluation_steps > 0 and training_steps % evaluation_steps == 0:
                     self._eval_during_training(evaluator, output_path, save_best_model, epoch,
