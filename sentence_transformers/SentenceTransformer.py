@@ -568,7 +568,7 @@ class SentenceTransformer(nn.Sequential):
                         loss_value.backward()
                         torch.nn.utils.clip_grad_norm_(loss_model.parameters(), max_grad_norm)
                         optimizer.step()
-
+                    print(type(loss_value))
                     optimizer.zero_grad()
 
                     if not skip_scheduler:
