@@ -19,6 +19,7 @@ from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("", "--train-file", type=str, default='sbert.train.txt', dest = 'train_file')
 parser.add_option("", "--eval-file", type=str, default='sbert.eval.txt', dest = 'eval_file')
+parser.add_option("", "--output-dir", type=str, default=None, dest = 'output_dir')
 parser.add_option("", "--log-file", type=str, default=None, dest = 'log_file')
 parser.add_option("", "--batch-size", type=int, default=8, dest = 'batch_size')
 parser.add_option("", "--epoch", type=int, default=5, dest = 'epoch')
@@ -95,6 +96,7 @@ def callback(score, epoch, steps):
     print('evaluation:', score, file = f_log)
 model.fit(train_objectives=[(train_dataloader, train_loss)],  
     epochs=opts.epoch,
-    evaluator=evaluator, evaluation_steps=1000,  log_loss_steps = 1000,
+    evaluator = evaluator, evaluation_steps=1000,  log_loss_steps = 1000,
     callback = callback,
+    output_path = opts.output_dir,
     epochs=1, warmup_steps=100 )
