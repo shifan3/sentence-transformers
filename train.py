@@ -101,5 +101,5 @@ model.fit(train_objectives=[(train_dataloader, train_loss)],
     evaluator = evaluator, evaluation_steps=1000,  log_loss_steps = 1000,
     callback = callback,
     output_path = opts.output_dir,
-    show_progress_bar=False,
+    show_progress_bar=True,
     warmup_steps=100 )
