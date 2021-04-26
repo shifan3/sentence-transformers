@@ -92,8 +92,13 @@ evaluator = evaluation.EmbeddingSimilarityEvaluator(eval_s1, eval_s2, eval_score
 #model = BalancedDataParallel(8, model)
 model = model.cuda()
 
+best = None
 def callback(score, epoch, steps):
-    print(f'evaluation at {steps}/{epoch}:', score, file = f_log, flush=True)
+    if best is None or score >= best:
+        BEST = "BEST"
+    else:
+        BEST = ""
+    print(f'evaluation at {steps}/{epoch}:{score} {BEST}', file = f_log, flush=True)
 
 print('start training', file = f_log, flush=True)
 model.fit(train_objectives=[(train_dataloader, train_loss)],  
