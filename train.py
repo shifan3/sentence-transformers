@@ -93,10 +93,11 @@ evaluator = evaluation.EmbeddingSimilarityEvaluator(eval_s1, eval_s2, eval_score
 model = model.cuda()
 
 def callback(score, epoch, steps):
-    print('evaluation:', score, file = f_log)
+    print(f'evaluation at {steps}/{epoch}:', score, file = f_log)
 model.fit(train_objectives=[(train_dataloader, train_loss)],  
     epochs=opts.epoch,
     evaluator = evaluator, evaluation_steps=1000,  log_loss_steps = 1000,
     callback = callback,
     output_path = opts.output_dir,
+    show_progress_bar=False,
     warmup_steps=100 )
