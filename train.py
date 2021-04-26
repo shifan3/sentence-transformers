@@ -49,26 +49,38 @@ with codecs.open(opts.train_file, 'r', 'utf-8') as f:
     t2 = None
     simi = None
     for i, line in enumerate(tqdm.tqdm(f, file=f_log)):
-        if i % 4 == 0:
+        if i % 3 == 0:
             t1 = line.strip()
-        elif i % 4 == 1:
+        elif i % 3 == 1:
             t2 = line.strip()
-        elif i % 4 == 2:
+        elif i % 3 == 2:
             simi = float(line.strip())
-        else:
             t1 = ' '.join(t1)
             t2 = ' '.join(t2)
-            if random.choice(list(range(0, 20))) == 1 and len(eval_s1) < 500:
-                
-                eval_s1.append(t1)
-                eval_s2.append(t2)
-                eval_score.append(simi)
-            else:
-                data = InputExample(texts=[t1, t2], label=simi)
-                train_examples.append(data)
-            if len(train_examples) > 1000000:
-                break
-        
+            
+            data = InputExample(texts=[t1, t2], label=simi)
+            train_examples.append(data)
+
+
+with codecs.open(opts.eval_file, 'r', 'utf-8') as f:
+    t1 = None
+    t2 = None
+    simi = None
+    for i, line in enumerate(tqdm.tqdm(f, file=f_log)):
+        if i % 3 == 0:
+            t1 = line.strip()
+        elif i % 3 == 1:
+            t2 = line.strip()
+        elif i % 3 == 2:
+            simi = float(line.strip())
+            t1 = ' '.join(t1)
+            t2 = ' '.join(t2)
+            
+            eval_s1.append(t1)
+            eval_s2.append(t2)
+            eval_score.append(simi)
+            
+
 train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=opts.batch_size)
 train_loss = losses.CosineSimilarityLoss(model)
 evaluator = evaluation.EmbeddingSimilarityEvaluator(eval_s1, eval_s2, eval_score, main_similarity=SimilarityFunction.COSINE)
@@ -81,6 +93,6 @@ model = model.cuda()
 def callback(score, epoch, steps):
     print('evaluation:', score, file = f_log)
 model.fit(train_objectives=[(train_dataloader, train_loss)], 
-    evaluator=evaluator, evaluation_steps=100,  log_loss_steps = 100,
+    evaluator=evaluator, evaluation_steps=1000,  log_loss_steps = 1000,
     callback = callback,
     epochs=1, warmup_steps=100 )
