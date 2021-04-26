@@ -21,6 +21,7 @@ parser.add_option("", "--train-file", type=str, default='sbert.train.txt', dest 
 parser.add_option("", "--eval-file", type=str, default='sbert.eval.txt', dest = 'eval_file')
 parser.add_option("", "--log-file", type=str, default=None, dest = 'log_file')
 parser.add_option("", "--batch-size", type=int, default=8, dest = 'batch_size')
+parser.add_option("", "--epoch", type=int, default=5, dest = 'epoch')
 
 #parser.add_option("", "--save-dir", type=str, default='/mnt/data5/feat_test', dest = 'save_dir')
 
@@ -92,7 +93,8 @@ model = model.cuda()
 
 def callback(score, epoch, steps):
     print('evaluation:', score, file = f_log)
-model.fit(train_objectives=[(train_dataloader, train_loss)], 
+model.fit(train_objectives=[(train_dataloader, train_loss)],  
+    epochs=opts.epoch,
     evaluator=evaluator, evaluation_steps=1000,  log_loss_steps = 1000,
     callback = callback,
     epochs=1, warmup_steps=100 )
