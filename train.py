@@ -98,12 +98,12 @@ def callback(score, epoch, steps):
         BEST = "BEST"
     else:
         BEST = ""
-    print(f'evaluation at {steps}/{epoch}:{score} {BEST}', file = f_log, flush=True)
+    print(f'evaluation at {epoch}#{steps}:{score} {BEST}', file = f_log, flush=True)
 
 print('start training', file = f_log, flush=True)
 model.fit(train_objectives=[(train_dataloader, train_loss)],  
     epochs=opts.epoch,
-    evaluator = evaluator, evaluation_steps=1000,  log_loss_steps = 1000,
+    evaluator = evaluator, evaluation_steps=300,
     callback = callback,
     output_path = opts.output_dir,
     show_progress_bar=True,
