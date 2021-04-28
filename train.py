@@ -95,6 +95,7 @@ best = None
 def callback(score, epoch, steps):
     if best is None or score >= best:
         BEST = "BEST"
+        best = score
     else:
         BEST = ""
     print(f'evaluation at {epoch}#{steps}:{score} {BEST}', file = f_log, flush=True)
