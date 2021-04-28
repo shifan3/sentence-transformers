@@ -30,7 +30,7 @@ if opts.output_dir is None:
 
 f_log = sys.stderr
 if opts.log_file:
-    f_log = codecs.open(opts.log_file, 'w', 'utf-8')
+    f_log = codecs.open(opts.eval_log_file, 'w', 'utf-8')
 
 word_embedding_model = models.Transformer('hfl/chinese-bert-wwm-ext', max_seq_length=256)
 pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
