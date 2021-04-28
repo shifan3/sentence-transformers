@@ -93,6 +93,7 @@ model = model.cuda()
 
 best = None
 def callback(score, epoch, steps):
+    global best
     if best is None or score >= best:
         BEST = "BEST"
         best = score
