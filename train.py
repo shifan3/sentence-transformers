@@ -29,7 +29,7 @@ if opts.output_dir is None:
     raise Exception('must have --output-dir option')
 
 f_log = sys.stderr
-if opts.log_file:
+if opts.eval_log_file:
     f_log = codecs.open(opts.eval_log_file, 'w', 'utf-8')
 
 word_embedding_model = models.Transformer('hfl/chinese-bert-wwm-ext', max_seq_length=256)
