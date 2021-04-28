@@ -20,7 +20,7 @@ parser = OptionParser()
 parser.add_option("", "--train-file", type=str, default='sbert.train.txt', dest = 'train_file')
 parser.add_option("", "--eval-file", type=str, default='sbert.eval.txt', dest = 'eval_file')
 parser.add_option("", "--output-dir", type=str, default=None, dest = 'output_dir')
-parser.add_option("", "--log-file", type=str, default=None, dest = 'log_file')
+parser.add_option("", "--eval-log-file", type=str, default=None, dest = 'eval_log_file')
 parser.add_option("", "--batch-size", type=int, default=8, dest = 'batch_size')
 parser.add_option("", "--epoch", type=int, default=5, dest = 'epoch')
 
@@ -49,7 +49,7 @@ with codecs.open(opts.train_file, 'r', 'utf-8') as f:
     t1 = None
     t2 = None
     simi = None
-    for i, line in enumerate(tqdm.tqdm(f, file=f_log)):
+    for i, line in enumerate(tqdm.tqdm(f)):
         if i % 3 == 0:
             t1 = line.strip()
         elif i % 3 == 1:
@@ -67,7 +67,7 @@ with codecs.open(opts.eval_file, 'r', 'utf-8') as f:
     t1 = None
     t2 = None
     simi = None
-    for i, line in enumerate(tqdm.tqdm(f, file=f_log)):
+    for i, line in enumerate(tqdm.tqdm(f)):
         if i % 3 == 0:
             t1 = line.strip()
         elif i % 3 == 1:
@@ -99,7 +99,7 @@ def callback(score, epoch, steps):
         BEST = ""
     print(f'evaluation at {epoch}#{steps}:{score} {BEST}', file = f_log, flush=True)
 
-print('start training', file = f_log, flush=True)
+print('start training', file = sys.stderr, flush=True)
 model.fit(train_objectives=[(train_dataloader, train_loss)],  
     epochs=opts.epoch,
     evaluator = evaluator, evaluation_steps=300,
