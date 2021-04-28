@@ -24,10 +24,9 @@ parser.add_option("", "--log-file", type=str, default=None, dest = 'log_file')
 parser.add_option("", "--batch-size", type=int, default=8, dest = 'batch_size')
 parser.add_option("", "--epoch", type=int, default=5, dest = 'epoch')
 
-#parser.add_option("", "--save-dir", type=str, default='/mnt/data5/feat_test', dest = 'save_dir')
-
 opts, args = parser.parse_args()
-
+if opts.output_dir is None:
+    raise Exception('must have --output-dir option')
 
 f_log = sys.stderr
 if opts.log_file:
