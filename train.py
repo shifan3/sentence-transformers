@@ -23,6 +23,7 @@ parser.add_option("", "--output-dir", type=str, default=None, dest = 'output_dir
 parser.add_option("", "--eval-log-file", type=str, default=None, dest = 'eval_log_file')
 parser.add_option("", "--batch-size", type=int, default=8, dest = 'batch_size')
 parser.add_option("", "--epoch", type=int, default=5, dest = 'epoch')
+parser.add_option("", "--load-from", type=str, default=None, dest = 'load_from')
 
 opts, args = parser.parse_args()
 if opts.output_dir is None:
@@ -32,13 +33,17 @@ f_log = sys.stderr
 if opts.eval_log_file:
     f_log = codecs.open(opts.eval_log_file, 'w', 'utf-8')
 
-word_embedding_model = models.Transformer('hfl/chinese-bert-wwm-ext', max_seq_length=256)
-pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
+if opts.load_from:
+    model = SentenceTransformer(opts.load_from)
+else:
+    word_embedding_model = models.Transformer('hfl/chinese-bert-wwm-ext', max_seq_length=256)
+    pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
 
 
-dense_model = models.Dense(in_features=pooling_model.get_sentence_embedding_dimension(), 
-    out_features=1024, activation_function=nn.Tanh())
-model = SentenceTransformer(modules=[word_embedding_model, pooling_model, dense_model])
+    dense_model = models.Dense(in_features=pooling_model.get_sentence_embedding_dimension(), 
+        out_features=1024, activation_function=nn.Tanh())
+    model = SentenceTransformer(modules=[word_embedding_model, pooling_model, dense_model])
+
 model.cuda()
 
 train_examples = []
